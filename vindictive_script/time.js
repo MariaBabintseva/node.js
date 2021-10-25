@@ -2,8 +2,8 @@ const fs = require('fs')
 
 function getCurrentDate() {
     const data = new Date();
-const currentDate = data.getTime()
-return currentDate
+    const currentDate = data.getTime()
+    return currentDate
 }
 
 getCurrentDate()
@@ -13,49 +13,40 @@ if (!fileExists) {
     console.log('Окей, ты меня запустил. Ты доволен?')
     const currentDate = getCurrentDate()
     fs.writeFileSync('./time.txt', currentDate)
-} else {
-    const lastTime = fs.readFileSync('./time.txt', 'utf-8')
-
-    const currentTime = getCurrentDate()
-
-    const milliseconds = currentTime - lastTime
- 
-const days = Math.floor(milliseconds / 86400000)
-
-if (days === 0) {
-    resultDays = ''
-} else {
-     resultDays = `${days} дня,`;
+    return;
 }
 
-    const hours = Math.floor(milliseconds / 3600000)
+const lastTime = fs.readFileSync('./time.txt', 'utf-8')
 
-if (hours === 0) {
-    resultHours = ''
-} else {
-     resultHours = `${hours} часа,`;
-}
-   
- const mins = ((milliseconds / 3600000)- hours)* 60
- const minutes = Math.floor(mins)
+const currentTime = getCurrentDate()
 
-if (minutes === 0) {
-    resultMinutes = ''
+const milliseconds = currentTime - lastTime
+
+const dayInMilliseconds = 86400000;
+const days = Math.floor(milliseconds / dayInMilliseconds)
+
+function createResultMessage(time, word) {
+    if (time === 0) {
+        return '';
     } else {
-        resultMinutes = `${minutes} минут,`; 
+        return `${time} ${word}`;
     }
-   
-
- const seconds = Math.floor((mins - minutes)* 60)
-
-  if (seconds === 0) {
-    resultSeconds = ''
-    } else {
-        resultSeconds = `${seconds} секунд`;
-    }
-       
-       console.log(`Ну ты же уже запускал меня ${resultDays} ${resultHours} ${resultMinutes} ${resultSeconds} тому назад`) 
 }
+
+const hourInMilliseconds = 3600000;
+const hours = Math.floor(milliseconds / hourInMilliseconds)
+
+
+const minutesInHours = 60;
+const mins = ((milliseconds / hourInMilliseconds) - hours) * minutesInHours;
+const minutes = Math.floor(mins)
+
+const secondsInHours = 60;
+const seconds = Math.floor((mins - minutes) * secondsInHours)
+
+
+console.log(`Ну ты же уже запускал меня ${createResultMessage(days, 'дня,')} ${createResultMessage(hours, 'часа,')} ${createResultMessage(minutes, 'минут,')} ${createResultMessage(seconds, 'секунд')} тому назад`)
+
 
 const newCurrentTime = getCurrentDate()
-    fs.writeFileSync('./time.txt', newCurrentTime)
+fs.writeFileSync('./time.txt', newCurrentTime)
